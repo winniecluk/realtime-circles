@@ -6,16 +6,20 @@ document.addEventListener("DOMContentLoaded", function() {
   socket.on('add-circle', function (data) {
     addCircle(data);
   });
-
+  socket.on('update-player-list', function(data){
+    var playerList = '<li>' + data.join('</li><li>') + '</li>';
+    players.innerHTML = playerList;
+  });
 
 
   var circles = document.getElementById('circles');
+  var players = document.getElementById('players');
   var initials = '';
 
   circles.addEventListener('click', function(evt) {
    // send this to the server
     socket.emit('add-circle', {
-      initials: initials,
+      initials: data.initials,
       x: evt.clientX,
       y: evt.clientY,
       dia: randomBetween(10,100),
@@ -36,6 +40,8 @@ document.addEventListener("DOMContentLoaded", function() {
   do {
     initials = getInitials();
   } while (initials.length < 2 || initials.length > 3);
+  socket.emit('register-player', {initials: initials});
+
 
   function getInitials() {
     var input = prompt("Please enter your initials");
